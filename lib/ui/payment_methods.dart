@@ -50,7 +50,7 @@ class _PaymentMethodScreenState extends State<PaymentMethodScreen> {
                 InkWell(
                   onTap: () {
                     // PaymentMethodAPI().login();
-                    // PaymentMethodAPI().fetchPaymentMethods(context);
+                    PaymentMethodAPI().fetchPaymentMethods(context);
                     // PaymentMethodAPI().fetchPaymentMethodSettings(context);
                   },
                   child: Container(
@@ -97,10 +97,11 @@ class _PaymentMethodScreenState extends State<PaymentMethodScreen> {
                     itemBuilder: (context, index) {
                       return InkWell(
                         onTap: () {
-                          PaymentMethodAPI().fetchPaymentMethodSettings(
-                            context,
-                            model.paymentMethods[index].code,
-                          );
+                          // PaymentMethodAPI().fetchPaymentMethodSettings(
+                          //   context,
+                          //   model.paymentMethods[index].id.toString(),
+                          // );
+                          _showBottomSheet(model.paymentMethods[index].titleEn);
                         },
                         child: Row(
                           children: [
@@ -284,5 +285,167 @@ class _PaymentMethodScreenState extends State<PaymentMethodScreen> {
     }
 
     return icon;
+  }
+
+  _showBottomSheet(String paymentMethods) {
+    showModalBottomSheet(
+      elevation: 10,
+      backgroundColor: Theme.of(context).bottomAppBarColor,
+      isScrollControlled: true,
+      context: context,
+      shape: const RoundedRectangleBorder(
+        // <-- for border radius
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(20.0),
+          topRight: Radius.circular(20.0),
+        ),
+      ),
+      builder: (ctx) => StatefulBuilder(builder: (context, setState) {
+        return Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            //header
+            Container(
+              padding: const EdgeInsets.only(left: 10.0, right: 10.0),
+              child: Row(
+                mainAxisSize: MainAxisSize.max,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Expanded(
+                    child: Center(
+                      child: Text(
+                        "Select the " +
+                            paymentMethods.toLowerCase() +
+                            " method",
+                        style: const TextStyle(
+                          fontSize: 18.0,
+                          color: EjaraStyles.colorDarkBlue,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ),
+
+                  //close button
+                  IconButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    icon: const Icon(
+                      Icons.close,
+                      color: EjaraStyles.colorDarkBlue,
+                      size: 19,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+            // divider
+            const Divider(
+              thickness: 1.5,
+            ),
+
+            // or
+            Container(
+              padding: const EdgeInsets.only(top: 15, right: 15),
+              child: Row(
+                children: [
+                  const Expanded(
+                    child: Divider(
+                      thickness: 2,
+                      indent: 10,
+                    ),
+                  ),
+                  Container(
+                    padding: const EdgeInsets.only(left: 10.0, right: 10.0),
+                    child: Text(
+                      "Or",
+                      style: TextStyle(
+                        fontWeight: FontWeight.w700,
+                        color: EjaraStyles.colorLightBlue.withOpacity(0.5),
+                        fontSize: 16.0,
+                      ),
+                    ),
+                  ),
+                  const Expanded(
+                    child: Divider(
+                      thickness: 2,
+                      endIndent: 10,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+            // add method
+            Container(
+              padding: const EdgeInsets.only(
+                left: 15,
+                right: 15,
+                top: 35.0,
+                bottom: 30.0,
+              ),
+              child: TextButton(
+                onPressed: () {},
+                style: TextButton.styleFrom(
+                  primary: EjaraStyles.colorBlue,
+                  backgroundColor: EjaraStyles.colorBlue.withOpacity(0.1),
+                  padding: const EdgeInsets.all(15.0),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20.0),
+                  ),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Icon(Icons.add),
+                    const SizedBox(
+                      width: 10,
+                    ),
+                    Text(
+                      "Another " + paymentMethods.toLowerCase() + " method",
+                      style: const TextStyle(
+                        fontWeight: FontWeight.w600,
+                        fontSize: 18.0,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+
+            // continue button
+            Container(
+              padding: const EdgeInsets.only(
+                left: 15,
+                right: 15,
+                // top: 35.0,
+                bottom: 30.0,
+              ),
+              width: MediaQuery.of(context).size.width,
+              child: TextButton(
+                onPressed: () {},
+                style: TextButton.styleFrom(
+                  primary: EjaraStyles.colorWhite,
+                  backgroundColor: EjaraStyles.colorDarkBlue,
+                  padding: const EdgeInsets.all(20.0),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20.0),
+                  ),
+                ),
+                child: const Text(
+                  "Continue",
+                  style: TextStyle(
+                    fontWeight: FontWeight.w600,
+                    fontSize: 18.0,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        );
+      }),
+    );
   }
 }
