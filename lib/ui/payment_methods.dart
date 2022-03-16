@@ -1,53 +1,146 @@
 import 'package:ejara/common/ejara_styles.dart';
+import 'package:ejara/models/payment_methods.dart';
+import 'package:ejara/utils/payment_methods_api.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttericon/font_awesome_icons.dart';
+import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-class PaymentMethodScreen extends StatelessWidget {
-  PaymentMethodScreen({Key? key}) : super(key: key);
+class PaymentMethodScreen extends StatefulWidget {
+  const PaymentMethodScreen({Key? key}) : super(key: key);
+
+  @override
+  State<PaymentMethodScreen> createState() => _PaymentMethodScreenState();
+}
+
+class _PaymentMethodScreenState extends State<PaymentMethodScreen> {
+  @override
+  void initState() {
+    initializes();
+    super.initState();
+  }
+
+  initializes() async {
+    final prefs = await SharedPreferences.getInstance();
+
+    String _token = prefs.getString("token") ?? "";
+
+    if (_token.isEmpty) {
+      await PaymentMethodAPI().login();
+    }
+
+    PaymentMethodAPI().fetchPaymentMethods(context);
+  }
 
   @override
   Widget build(BuildContext context) {
     return SafeArea(
-      child: Scaffold(
-        backgroundColor: EjaraStyles.colorBackground,
-        body: Container(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              backButton,
+      child: Consumer<PaymentMethodsModel>(
+        builder: (context, model, child) => Scaffold(
+          backgroundColor: EjaraStyles.colorBackground,
+          body: Container(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                backButton,
 
-              // choose payment methods
-              Container(
-                padding: const EdgeInsets.only(top: 15.0, bottom: 15.0),
-                child: const Text(
-                  "Choose a payment method",
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    color: EjaraStyles.colorDarkerBlue,
-                    fontSize: 40.0,
-                    fontWeight: FontWeight.bold,
+                // choose payment methods
+                // TODO: remove inkwell
+                InkWell(
+                  onTap: () {
+                    // PaymentMethodAPI().login();
+                    PaymentMethodAPI().fetchPaymentMethods(context);
+                  },
+                  child: Container(
+                    padding: const EdgeInsets.only(top: 15.0, bottom: 15.0),
+                    child: const Text(
+                      "Choose a payment method",
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        color: EjaraStyles.colorDarkerBlue,
+                        fontSize: 40.0,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
                   ),
                 ),
-              ),
 
-              // balanceCard
-              balanceCard(),
+                // balanceCard
+                balanceCard(),
 
-              Container(
-                padding: const EdgeInsets.only(
-                  top: 15.0,
-                  bottom: 15.0,
-                ),
-                child: const Text(
-                  "Select a payment methods",
-                  style: TextStyle(
-                    fontSize: 18.0,
-                    color: EjaraStyles.colorDarkBlue,
-                    fontWeight: FontWeight.bold,
+                Container(
+                  padding: const EdgeInsets.only(
+                    top: 20.0,
+                    bottom: 20.0,
+                  ),
+                  child: const Text(
+                    "Select a payment methods",
+                    style: TextStyle(
+                      fontSize: 18.0,
+                      color: EjaraStyles.colorDarkBlue,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
-              ),
-            ],
+
+                // payment_methods
+                Expanded(
+                  child: ListView.separated(
+                    separatorBuilder: (context, index) {
+                      return const Divider(
+                        height: 25.0,
+                      );
+                    },
+                    itemCount: model.paymentMethods.length,
+                    itemBuilder: (context, index) {
+                      return Row(
+                        children: [
+                          // icon
+                          Container(
+                              padding: const EdgeInsets.all(12.0),
+                              margin: const EdgeInsets.only(right: 15.0),
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: EjaraStyles.colorBlue.withOpacity(0.1),
+                              ),
+                              child: Icon(
+                                getIcon(model.paymentMethods[index].titleEn),
+                                color: EjaraStyles.colorBlue,
+                              )),
+
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                model.paymentMethods[index].titleEn,
+                                style: const TextStyle(
+                                  fontSize: 18.0,
+                                  color: EjaraStyles.colorDarkBlue,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                              Container(
+                                padding: const EdgeInsets.only(
+                                  top: 5.0,
+                                ),
+                                child: const Text(
+                                  "Fees: ",
+                                  style: TextStyle(
+                                    color: EjaraStyles.colorLightBlue,
+                                    fontSize: 16,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      );
+                    },
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -106,6 +199,7 @@ class PaymentMethodScreen extends StatelessWidget {
               style: TextStyle(
                 fontSize: 22.0,
                 color: EjaraStyles.colorLightBlue,
+                fontWeight: FontWeight.w600,
               ),
             ),
           ),
@@ -120,6 +214,7 @@ class PaymentMethodScreen extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 28.0,
                     color: EjaraStyles.colorDarkBlue,
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
                 Text(
@@ -127,6 +222,7 @@ class PaymentMethodScreen extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 28.0,
                     color: EjaraStyles.colorLightBlue,
+                    fontWeight: FontWeight.w500,
                   ),
                 ),
               ],
@@ -160,5 +256,21 @@ class PaymentMethodScreen extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  IconData getIcon(String name) {
+    IconData icon;
+    switch (name.toLowerCase()) {
+      case "mobile money":
+        icon = Icons.phone_android_rounded;
+        break;
+      case "bank":
+        icon = FontAwesome.bank;
+        break;
+      default:
+        icon = Icons.attach_money;
+    }
+
+    return icon;
   }
 }
