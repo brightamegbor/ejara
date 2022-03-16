@@ -355,6 +355,7 @@ class _PaymentMethodScreenState extends State<PaymentMethodScreen> {
             // divider
             const Divider(
               thickness: 1.5,
+              height: 10.0,
             ),
 
             // wallets
@@ -455,15 +456,15 @@ class _PaymentMethodScreenState extends State<PaymentMethodScreen> {
                       ),
                     ),
                   ),
+
             // or
             Container(
-              padding: const EdgeInsets.only(top: 15, right: 15),
+              padding: const EdgeInsets.only(top: 25, right: 15, left: 15),
               child: Row(
                 children: [
                   Expanded(
                     child: Divider(
                       thickness: 2,
-                      indent: 10,
                       color: EjaraStyles.colorLightBlue.withOpacity(0.1),
                     ),
                   ),
@@ -481,7 +482,6 @@ class _PaymentMethodScreenState extends State<PaymentMethodScreen> {
                   Expanded(
                     child: Divider(
                       thickness: 2,
-                      endIndent: 10,
                       color: EjaraStyles.colorLightBlue.withOpacity(0.1),
                     ),
                   ),
