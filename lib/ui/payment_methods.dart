@@ -50,7 +50,8 @@ class _PaymentMethodScreenState extends State<PaymentMethodScreen> {
                 InkWell(
                   onTap: () {
                     // PaymentMethodAPI().login();
-                    PaymentMethodAPI().fetchPaymentMethods(context);
+                    // PaymentMethodAPI().fetchPaymentMethods(context);
+                    // PaymentMethodAPI().fetchPaymentMethodSettings(context);
                   },
                   child: Container(
                     padding: const EdgeInsets.only(top: 15.0, bottom: 15.0),
@@ -59,7 +60,7 @@ class _PaymentMethodScreenState extends State<PaymentMethodScreen> {
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         color: EjaraStyles.colorDarkerBlue,
-                        fontSize: 40.0,
+                        fontSize: 35.0,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -94,47 +95,56 @@ class _PaymentMethodScreenState extends State<PaymentMethodScreen> {
                     },
                     itemCount: model.paymentMethods.length,
                     itemBuilder: (context, index) {
-                      return Row(
-                        children: [
-                          // icon
-                          Container(
-                              padding: const EdgeInsets.all(12.0),
-                              margin: const EdgeInsets.only(right: 15.0),
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                color: EjaraStyles.colorBlue.withOpacity(0.1),
-                              ),
-                              child: Icon(
-                                getIcon(model.paymentMethods[index].titleEn),
-                                color: EjaraStyles.colorBlue,
-                              )),
+                      return InkWell(
+                        onTap: () {
+                          PaymentMethodAPI().fetchPaymentMethodSettings(
+                            context,
+                            model.paymentMethods[index].code,
+                          );
+                        },
+                        child: Row(
+                          children: [
+                            // icon
+                            Container(
+                                padding: const EdgeInsets.all(12.0),
+                                margin: const EdgeInsets.only(right: 15.0),
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: EjaraStyles.colorBlue.withOpacity(0.1),
+                                ),
+                                child: Icon(
+                                  getIcon(model.paymentMethods[index].titleEn),
+                                  color: EjaraStyles.colorBlue,
+                                )),
 
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                model.paymentMethods[index].titleEn,
-                                style: const TextStyle(
-                                  fontSize: 18.0,
-                                  color: EjaraStyles.colorDarkBlue,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                              Container(
-                                padding: const EdgeInsets.only(
-                                  top: 5.0,
-                                ),
-                                child: const Text(
-                                  "Fees: ",
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  model.paymentMethods[index].titleEn,
                                   style: TextStyle(
-                                    color: EjaraStyles.colorLightBlue,
-                                    fontSize: 16,
+                                    fontSize: 18.0,
+                                    color: EjaraStyles.colorDarkBlue
+                                        .withOpacity(0.7),
+                                    fontWeight: FontWeight.w600,
                                   ),
                                 ),
-                              ),
-                            ],
-                          ),
-                        ],
+                                Container(
+                                  padding: const EdgeInsets.only(
+                                    top: 5.0,
+                                  ),
+                                  child: const Text(
+                                    "Fees: ",
+                                    style: TextStyle(
+                                      color: EjaraStyles.colorLightBlue,
+                                      fontSize: 16,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
                       );
                     },
                   ),
@@ -237,18 +247,20 @@ class _PaymentMethodScreenState extends State<PaymentMethodScreen> {
               padding: const EdgeInsets.all(15.0),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: const [
+                children: [
                   Text(
                     "Earnings per day",
                     style: TextStyle(
-                      color: EjaraStyles.colorLightBlue,
+                      color: EjaraStyles.colorLightBlue.withOpacity(0.5),
+                      fontWeight: FontWeight.w600,
                     ),
                   ),
-                  Text(
+                  const Text(
                     "10,000CFA",
                     style: TextStyle(
                       fontSize: 16.0,
                       color: EjaraStyles.colorLightBlue,
+                      fontWeight: FontWeight.w600,
                     ),
                   ),
                 ],
