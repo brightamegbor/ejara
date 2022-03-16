@@ -14,6 +14,8 @@ class PaymentMethodScreen extends StatefulWidget {
 }
 
 class _PaymentMethodScreenState extends State<PaymentMethodScreen> {
+  var selectedWallet;
+
   @override
   void initState() {
     initializes();
@@ -101,7 +103,16 @@ class _PaymentMethodScreenState extends State<PaymentMethodScreen> {
                           //   context,
                           //   model.paymentMethods[index].id.toString(),
                           // );
-                          _showBottomSheet(model.paymentMethods[index].titleEn);
+
+                          // check if mobile money is clicked, then set a dummy data
+                          if (model.paymentMethods[index].titleEn
+                              .toLowerCase()
+                              .contains("mobile")) {
+                            PaymentMethodAPI().setDummyMobileWallets(context);
+                          }
+
+                          _showBottomSheet(
+                              model.paymentMethods[index].titleEn, model);
                         },
                         child: Row(
                           children: [
@@ -287,7 +298,7 @@ class _PaymentMethodScreenState extends State<PaymentMethodScreen> {
     return icon;
   }
 
-  _showBottomSheet(String paymentMethods) {
+  _showBottomSheet(String paymentMethods, PaymentMethodsModel model) {
     showModalBottomSheet(
       elevation: 10,
       backgroundColor: Theme.of(context).bottomAppBarColor,
@@ -306,7 +317,7 @@ class _PaymentMethodScreenState extends State<PaymentMethodScreen> {
           children: [
             //header
             Container(
-              padding: const EdgeInsets.only(left: 10.0, right: 10.0),
+              padding: const EdgeInsets.only(left: 20.0, right: 10.0),
               child: Row(
                 mainAxisSize: MainAxisSize.max,
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -346,15 +357,87 @@ class _PaymentMethodScreenState extends State<PaymentMethodScreen> {
               thickness: 1.5,
             ),
 
+            // wallets
+            SizedBox(
+              height: 250,
+              child: ListView.builder(
+                  itemCount: model.wallets.length,
+                  itemBuilder: (context, index) {
+                    return Container(
+                      padding: const EdgeInsets.only(
+                        left: 15,
+                        right: 15,
+                        top: 5.0,
+                      ),
+                      child: Card(
+                        elevation: 10.0,
+                        shadowColor:
+                            EjaraStyles.colorCardShadow.withOpacity(0.2),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20.0),
+                        ),
+                        child: Container(
+                          padding: const EdgeInsets.all(10.0),
+                          child: Row(
+                            children: [
+                              Theme(
+                                data: Theme.of(context).copyWith(
+                                  unselectedWidgetColor: EjaraStyles
+                                      .colorLightBlue
+                                      .withOpacity(0.2),
+                                ),
+                                child: Transform.scale(
+                                  scale: 1.2,
+                                  child: Radio(
+                                    value: "value",
+                                    groupValue: selectedWallet,
+                                    onChanged: (val) {},
+                                  ),
+                                ),
+                              ),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    model.wallets[index].name,
+                                    style: const TextStyle(
+                                      fontSize: 18.0,
+                                      color: EjaraStyles.colorDarkBlue,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  const SizedBox(
+                                    height: 8.0,
+                                  ),
+                                  Text(
+                                    model.wallets[index].number,
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.w600,
+                                      color: EjaraStyles.colorLightBlue
+                                          .withOpacity(0.5),
+                                      fontSize: 16.0,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    );
+                  }),
+            ),
+
             // or
             Container(
               padding: const EdgeInsets.only(top: 15, right: 15),
               child: Row(
                 children: [
-                  const Expanded(
+                  Expanded(
                     child: Divider(
                       thickness: 2,
                       indent: 10,
+                      color: EjaraStyles.colorLightBlue.withOpacity(0.1),
                     ),
                   ),
                   Container(
@@ -368,10 +451,11 @@ class _PaymentMethodScreenState extends State<PaymentMethodScreen> {
                       ),
                     ),
                   ),
-                  const Expanded(
+                  Expanded(
                     child: Divider(
                       thickness: 2,
                       endIndent: 10,
+                      color: EjaraStyles.colorLightBlue.withOpacity(0.1),
                     ),
                   ),
                 ],
