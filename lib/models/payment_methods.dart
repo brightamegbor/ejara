@@ -1,4 +1,5 @@
-import 'package:flutter/widgets.dart';
+import 'package:ejara/models/wallets.dart';
+import 'package:flutter/foundation.dart';
 
 class PaymentMethodsModel extends ChangeNotifier {
   List<PaymentType> _paymentMethods = [];
@@ -7,6 +8,15 @@ class PaymentMethodsModel extends ChangeNotifier {
 
   set paymentMethods(List<PaymentType> value) {
     _paymentMethods = value;
+    notifyListeners();
+  }
+
+  List<Wallet> _wallets = [];
+
+  List<Wallet> get wallets => _wallets;
+
+  set wallets(List<Wallet> value) {
+    _wallets = value;
     notifyListeners();
   }
 }

@@ -25,7 +25,7 @@ class MyApp extends StatelessWidget {
             fontFamily: "Metropolis",
             primarySwatch: Colors.blue,
           ),
-          home: PaymentMethodScreen(),
+          home: const PaymentMethodScreen(),
         ));
   }
 }
