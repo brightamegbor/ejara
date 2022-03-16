@@ -14,8 +14,6 @@ class PaymentMethodScreen extends StatefulWidget {
 }
 
 class _PaymentMethodScreenState extends State<PaymentMethodScreen> {
-  var selectedWallet;
-
   @override
   void initState() {
     initializes();
@@ -372,59 +370,73 @@ class _PaymentMethodScreenState extends State<PaymentMethodScreen> {
                               right: 15,
                               top: 5.0,
                             ),
-                            child: Card(
-                              elevation: 10.0,
-                              shadowColor:
-                                  EjaraStyles.colorCardShadow.withOpacity(0.2),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(20.0),
-                              ),
-                              child: Container(
-                                padding: const EdgeInsets.all(10.0),
-                                child: Row(
-                                  children: [
-                                    Theme(
-                                      data: Theme.of(context).copyWith(
-                                        unselectedWidgetColor: EjaraStyles
-                                            .colorLightBlue
-                                            .withOpacity(0.2),
-                                      ),
-                                      child: Transform.scale(
-                                        scale: 1.2,
-                                        child: Radio(
-                                          value: "value",
-                                          groupValue: selectedWallet,
-                                          onChanged: (val) {},
+                            child: GestureDetector(
+                              onTap: () {
+                                setState(() {
+                                  model.selectedWalletNumber =
+                                      model.wallets[index].number;
+                                });
+                              },
+                              child: Card(
+                                elevation: 10.0,
+                                shadowColor: EjaraStyles.colorCardShadow
+                                    .withOpacity(0.2),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(20.0),
+                                ),
+                                child: Container(
+                                  padding: const EdgeInsets.all(10.0),
+                                  child: Row(
+                                    children: [
+                                      Theme(
+                                        data: Theme.of(context).copyWith(
+                                          unselectedWidgetColor: EjaraStyles
+                                              .colorLightBlue
+                                              .withOpacity(0.2),
                                         ),
-                                      ),
-                                    ),
-                                    Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          model.wallets[index].name,
-                                          style: const TextStyle(
-                                            fontSize: 18.0,
-                                            color: EjaraStyles.colorDarkBlue,
-                                            fontWeight: FontWeight.bold,
+                                        child: Transform.scale(
+                                          scale: 1.2,
+                                          child: Radio<String>(
+                                            value: model.wallets[index].number,
+                                            groupValue:
+                                                model.selectedWalletNumber,
+                                            onChanged: (String? val) {
+                                              setState(() {
+                                                model.selectedWalletNumber =
+                                                    val!;
+                                              });
+                                            },
                                           ),
                                         ),
-                                        const SizedBox(
-                                          height: 8.0,
-                                        ),
-                                        Text(
-                                          model.wallets[index].number,
-                                          style: TextStyle(
-                                            fontWeight: FontWeight.w600,
-                                            color: EjaraStyles.colorLightBlue
-                                                .withOpacity(0.5),
-                                            fontSize: 16.0,
+                                      ),
+                                      Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            model.wallets[index].name,
+                                            style: const TextStyle(
+                                              fontSize: 18.0,
+                                              color: EjaraStyles.colorDarkBlue,
+                                              fontWeight: FontWeight.bold,
+                                            ),
                                           ),
-                                        ),
-                                      ],
-                                    ),
-                                  ],
+                                          const SizedBox(
+                                            height: 8.0,
+                                          ),
+                                          Text(
+                                            model.wallets[index].number,
+                                            style: TextStyle(
+                                              fontWeight: FontWeight.w600,
+                                              color: EjaraStyles.colorLightBlue
+                                                  .withOpacity(0.5),
+                                              fontSize: 16.0,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
                                 ),
                               ),
                             ),

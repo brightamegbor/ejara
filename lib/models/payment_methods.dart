@@ -19,6 +19,15 @@ class PaymentMethodsModel extends ChangeNotifier {
     _wallets = value;
     notifyListeners();
   }
+
+  String _selectedWalletNumber = "";
+
+  String get selectedWalletNumber => _selectedWalletNumber;
+
+  set selectedWalletNumber(String value) {
+    _selectedWalletNumber = value;
+    notifyListeners();
+  }
 }
 
 class PaymentType {
