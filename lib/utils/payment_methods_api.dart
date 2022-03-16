@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:ejara/models/payment_methods.dart';
+import 'package:ejara/models/wallets.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -35,6 +36,8 @@ class PaymentMethodAPI {
       if (response.statusCode == 200) {
         Map resMap = json.decode(response.body);
 
+        print(resMap);
+
         List<PaymentType> _paymentMethods = (resMap["data"] as List)
             .map((pm) => PaymentType.fromJson(pm))
             .toList();
@@ -42,6 +45,47 @@ class PaymentMethodAPI {
         var pmModel = context.read<PaymentMethodsModel>();
 
         pmModel.paymentMethods = _paymentMethods;
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        print(e);
+      }
+    }
+  }
+
+  void fetchPaymentMethodSettings(BuildContext context, String id) async {
+    final prefs = await SharedPreferences.getInstance();
+
+    print(id);
+
+    String _url =
+        "/customer/payment-settings-per-type?paymentTypeId=$id&countryCode=CM&transactionType=buy";
+
+    Uri pmUrl = Uri.parse(apiUrl + _url);
+
+    String apiKey = "838adf51aa";
+    String clientId = "jL]riHjAgbUZHofblIPigVgq1";
+    String? token = prefs.getString("token");
+
+    try {
+      final response = await http.get(pmUrl, headers: {
+        'api-key': apiKey,
+        'client-id': clientId,
+        'authorization': "Bearer $token",
+      });
+
+      if (response.statusCode == 200) {
+        Map resMap = json.decode(response.body);
+
+        print(resMap);
+
+        // List<PaymentType> _paymentMethods = (resMap["data"] as List)
+        //     .map((pm) => PaymentType.fromJson(pm))
+        //     .toList();
+
+        // var pmModel = context.read<PaymentMethodsModel>();
+
+        // pmModel.paymentMethods = _paymentMethods;
       }
     } catch (e) {
       if (kDebugMode) {
@@ -76,5 +120,32 @@ class PaymentMethodAPI {
         print(e);
       }
     }
+  }
+
+  void setDummyMobileWallets(BuildContext context) {
+    List<Map> _dummyData = [
+      {
+        "id": 1,
+        "name": "Orange Money",
+        "number": "696920908",
+      },
+      {
+        "id": 2,
+        "name": "MTN Mobile Money",
+        "number": "678897890",
+      },
+      {
+        "id": 3,
+        "name": "Orange Money",
+        "number": "690950490",
+      },
+    ];
+
+    List<Wallet> _wallets =
+        _dummyData.map((data) => Wallet.fromJson(data)).toList();
+
+    var pmModel = context.read<PaymentMethodsModel>();
+
+    pmModel.wallets = _wallets;
   }
 }
