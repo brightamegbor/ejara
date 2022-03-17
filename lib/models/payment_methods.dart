@@ -11,6 +11,15 @@ class PaymentMethodsModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  bool _isMethodLoading = false;
+
+  bool get isMethodLoading => _isMethodLoading;
+
+  set isMethodLoading(bool value) {
+    _isMethodLoading = value;
+    notifyListeners();
+  }
+
   List<Wallet> _wallets = [];
 
   List<Wallet> get wallets => _wallets;
@@ -38,6 +47,7 @@ class PaymentType {
   late String descriptionEn;
   late String descriptionFr;
   late String iconImage;
+  late String fees; // not provided by the api
 
   PaymentType({
     required this.id,
@@ -47,6 +57,7 @@ class PaymentType {
     required this.descriptionEn,
     required this.descriptionFr,
     required this.iconImage,
+    required this.fees,
   });
 
   PaymentType.fromJson(Map json) {
@@ -57,5 +68,8 @@ class PaymentType {
     descriptionEn = json["description_en"];
     descriptionFr = json["description_fr"];
     iconImage = json["icon_image"];
+    fees = json["title_en"].toString().toLowerCase().contains("mobile")
+        ? "200CFA"
+        : "Variable";
   }
 }

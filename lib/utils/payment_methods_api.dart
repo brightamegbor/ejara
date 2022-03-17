@@ -15,7 +15,12 @@ class PaymentMethodAPI {
   final JsonCodec _codec = const JsonCodec();
 
   void fetchPaymentMethods(BuildContext context) async {
+    var pmModel = context.read<PaymentMethodsModel>();
+
     final prefs = await SharedPreferences.getInstance();
+
+    // set loading
+    pmModel.isMethodLoading = true;
 
     String _url =
         "/marketplace/payment-types-per-country?country_code=CM&type=deposit";
@@ -42,8 +47,6 @@ class PaymentMethodAPI {
             .map((pm) => PaymentType.fromJson(pm))
             .toList();
 
-        var pmModel = context.read<PaymentMethodsModel>();
-
         pmModel.paymentMethods = _paymentMethods;
       }
     } catch (e) {
@@ -51,6 +54,9 @@ class PaymentMethodAPI {
         print(e);
       }
     }
+
+    // set loading
+    pmModel.isMethodLoading = false;
   }
 
   void fetchPaymentMethodSettings(BuildContext context, String id) async {

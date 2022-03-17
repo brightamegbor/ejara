@@ -1,5 +1,6 @@
 import 'package:ejara/common/ejara_styles.dart';
 import 'package:ejara/models/payment_methods.dart';
+import 'package:ejara/ui/new_wallet.dart';
 import 'package:ejara/utils/payment_methods_api.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttericon/font_awesome_icons.dart';
@@ -86,81 +87,100 @@ class _PaymentMethodScreenState extends State<PaymentMethodScreen> {
                 ),
 
                 // payment_methods
-                Expanded(
-                  child: ListView.separated(
-                    separatorBuilder: (context, index) {
-                      return const Divider(
-                        height: 25.0,
-                      );
-                    },
-                    itemCount: model.paymentMethods.length,
-                    itemBuilder: (context, index) {
-                      return InkWell(
-                        onTap: () {
-                          // PaymentMethodAPI().fetchPaymentMethodSettings(
-                          //   context,
-                          //   model.paymentMethods[index].id.toString(),
-                          // );
+                if (model.paymentMethods.isNotEmpty)
+                  Expanded(
+                    child: ListView.separated(
+                      separatorBuilder: (context, index) {
+                        return const Divider(
+                          height: 25.0,
+                        );
+                      },
+                      itemCount: model.paymentMethods.length,
+                      itemBuilder: (context, index) {
+                        return InkWell(
+                          onTap: () {
+                            // PaymentMethodAPI().fetchPaymentMethodSettings(
+                            //   context,
+                            //   model.paymentMethods[index].id.toString(),
+                            // );
 
-                          // check if mobile money is clicked, then set a dummy data
-                          if (model.paymentMethods[index].titleEn
-                              .toLowerCase()
-                              .contains("mobile")) {
-                            PaymentMethodAPI().setDummyMobileWallets(context);
-                          } else {
-                            model.wallets = [];
-                          }
+                            // check if mobile money is clicked, then set a dummy data
+                            if (model.paymentMethods[index].titleEn
+                                .toLowerCase()
+                                .contains("mobile")) {
+                              PaymentMethodAPI().setDummyMobileWallets(context);
+                            } else {
+                              model.wallets = [];
+                            }
 
-                          _showBottomSheet(
-                              model.paymentMethods[index].titleEn, model);
-                        },
-                        child: Row(
-                          children: [
-                            // icon
-                            Container(
-                                padding: const EdgeInsets.all(12.0),
-                                margin: const EdgeInsets.only(right: 15.0),
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  color: EjaraStyles.colorBlue.withOpacity(0.1),
-                                ),
-                                child: Icon(
-                                  getIcon(model.paymentMethods[index].titleEn),
-                                  color: EjaraStyles.colorBlue,
-                                )),
-
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  model.paymentMethods[index].titleEn,
-                                  style: TextStyle(
-                                    fontSize: 18.0,
-                                    color: EjaraStyles.colorDarkBlue
-                                        .withOpacity(0.7),
-                                    fontWeight: FontWeight.w600,
+                            _showBottomSheet(
+                                model.paymentMethods[index].titleEn, model);
+                          },
+                          child: Row(
+                            children: [
+                              // icon
+                              Container(
+                                  padding: const EdgeInsets.all(12.0),
+                                  margin: const EdgeInsets.only(right: 15.0),
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    color:
+                                        EjaraStyles.colorBlue.withOpacity(0.1),
                                   ),
-                                ),
-                                Container(
-                                  padding: const EdgeInsets.only(
-                                    top: 5.0,
-                                  ),
-                                  child: const Text(
-                                    "Fees: ",
+                                  child: Icon(
+                                    getIcon(
+                                        model.paymentMethods[index].titleEn),
+                                    color: EjaraStyles.colorBlue,
+                                  )),
+
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    model.paymentMethods[index].titleEn,
                                     style: TextStyle(
-                                      color: EjaraStyles.colorLightBlue,
-                                      fontSize: 16,
+                                      fontSize: 18.0,
+                                      color: EjaraStyles.colorDarkBlue
+                                          .withOpacity(0.7),
+                                      fontWeight: FontWeight.w600,
                                     ),
                                   ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      );
-                    },
+                                  Container(
+                                    padding: const EdgeInsets.only(
+                                      top: 5.0,
+                                    ),
+                                    child: Text(
+                                      "Fees: " +
+                                          model.paymentMethods[index].fees,
+                                      style: TextStyle(
+                                        color: EjaraStyles.colorLightBlue
+                                            .withOpacity(0.5),
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        );
+                      },
+                    ),
                   ),
-                ),
+
+                // show loading
+                if (model.isMethodLoading)
+                  const Center(
+                    child: SizedBox(
+                      width: 30,
+                      height: 30,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2.0,
+                        color: EjaraStyles.colorDarkBlue,
+                      ),
+                    ),
+                  )
               ],
             ),
           ),
@@ -498,7 +518,16 @@ class _PaymentMethodScreenState extends State<PaymentMethodScreen> {
                 bottom: 30.0,
               ),
               child: TextButton(
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => NewWallet(
+                        paymentMethod: paymentMethods.toLowerCase(),
+                      ),
+                    ),
+                  );
+                },
                 style: TextButton.styleFrom(
                   primary: EjaraStyles.colorBlue,
                   backgroundColor: EjaraStyles.colorBlue.withOpacity(0.1),
