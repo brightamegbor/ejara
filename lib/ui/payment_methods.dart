@@ -2,6 +2,7 @@ import 'package:ejara/common/ejara_styles.dart';
 import 'package:ejara/models/payment_methods.dart';
 import 'package:ejara/ui/new_wallet.dart';
 import 'package:ejara/utils/payment_methods_api.dart';
+import 'package:ejara/widgets/continue_button.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttericon/font_awesome_icons.dart';
 import 'package:provider/provider.dart';
@@ -557,32 +558,12 @@ class _PaymentMethodScreenState extends State<PaymentMethodScreen> {
 
             // continue button
             Container(
-              padding: const EdgeInsets.only(
-                left: 15,
-                right: 15,
-                // top: 35.0,
-                bottom: 30.0,
-              ),
-              width: MediaQuery.of(context).size.width,
-              child: TextButton(
-                onPressed: () {},
-                style: TextButton.styleFrom(
-                  primary: EjaraStyles.colorWhite,
-                  backgroundColor: EjaraStyles.colorDarkBlue,
-                  padding: const EdgeInsets.all(20.0),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20.0),
-                  ),
+                padding: const EdgeInsets.only(
+                  left: 15,
+                  right: 15,
+                  bottom: 30.0,
                 ),
-                child: const Text(
-                  "Continue",
-                  style: TextStyle(
-                    fontWeight: FontWeight.w600,
-                    fontSize: 18.0,
-                  ),
-                ),
-              ),
-            ),
+                child: const EjaraContinueButton())
           ],
         );
       }),
