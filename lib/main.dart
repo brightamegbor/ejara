@@ -2,11 +2,14 @@ import 'package:ejara/models/payment_methods.dart';
 import 'package:ejara/ui/payment_methods.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:global_configuration/global_configuration.dart';
 import 'package:provider/provider.dart';
 
-void main() {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   runApp(const MyApp());
+
+  await GlobalConfiguration().loadFromAsset("app_settings");
 }
 
 class MyApp extends StatelessWidget {

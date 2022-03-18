@@ -4,13 +4,15 @@ import 'package:ejara/models/payment_methods.dart';
 import 'package:ejara/models/wallets.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:global_configuration/global_configuration.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:provider/provider.dart';
 
 class PaymentMethodAPI {
-  static const String apiUrl =
-      "https://testbox-nellys-coin.ejaraapis.xyz/api/v1";
+  String apiUrl = GlobalConfiguration().getValue("api_url");
+  String apiKey = GlobalConfiguration().getValue("apiKey");
+  String clientId = GlobalConfiguration().getValue("clientId");
 
   final JsonCodec _codec = const JsonCodec();
 
@@ -27,8 +29,6 @@ class PaymentMethodAPI {
 
     Uri pmUrl = Uri.parse(apiUrl + _url);
 
-    String apiKey = "838adf51aa";
-    String clientId = "jL]riHjAgbUZHofblIPigVgq1";
     String? token = prefs.getString("token");
 
     try {
@@ -70,8 +70,6 @@ class PaymentMethodAPI {
 
     Uri pmUrl = Uri.parse(apiUrl + _url);
 
-    String apiKey = "838adf51aa";
-    String clientId = "jL]riHjAgbUZHofblIPigVgq1";
     String? token = prefs.getString("token");
 
     try {
@@ -105,10 +103,7 @@ class PaymentMethodAPI {
     try {
       final response = await http.post(
         _url,
-        headers: {
-          'api-key': "838adf51aa",
-          'client-id': "jL]riHjAgbUZHofblIPigVgq1"
-        },
+        headers: {'api-key': apiKey, 'client-id': clientId},
         body: _codec.encode({
           "log": "FlutterDev",
           "password": "flutterTest123!",
