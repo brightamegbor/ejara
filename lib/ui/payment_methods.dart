@@ -1,11 +1,16 @@
 import 'package:ejara/common/ejara_styles.dart';
 import 'package:ejara/models/payment_methods.dart';
 import 'package:ejara/ui/new_wallet.dart';
-import 'package:ejara/utils/number_formatter.dart';
 import 'package:ejara/utils/payment_methods_api.dart';
+import 'package:ejara/widgets/balance_card.dart';
 import 'package:ejara/widgets/continue_button.dart';
+import 'package:ejara/widgets/error_widget.dart';
+import 'package:ejara/widgets/loader.dart';
+import 'package:ejara/widgets/moveback_button.dart';
+import 'package:ejara/widgets/payment_methods_list.dart';
+import 'package:ejara/widgets/text_between_line.dart';
+import 'package:ejara/widgets/wallet_list.dart';
 import 'package:flutter/material.dart';
-import 'package:fluttericon/font_awesome_icons.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -46,7 +51,7 @@ class _PaymentMethodScreenState extends State<PaymentMethodScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                backButton,
+                const EjaraBackButton(),
 
                 // choose payment methods
                 Container(
@@ -63,7 +68,7 @@ class _PaymentMethodScreenState extends State<PaymentMethodScreen> {
                 ),
 
                 // balanceCard
-                balanceCard(),
+                const EjaraBalanceCard(),
 
                 Container(
                   padding: const EdgeInsets.only(
@@ -83,116 +88,21 @@ class _PaymentMethodScreenState extends State<PaymentMethodScreen> {
                 // payment_methods
                 if (model.paymentMethods.isNotEmpty)
                   Expanded(
-                    child: ListView.separated(
-                      separatorBuilder: (context, index) {
-                        return const Divider(
-                          height: 25.0,
-                        );
-                      },
-                      itemCount: model.paymentMethods.length,
-                      itemBuilder: (context, index) {
-                        return InkWell(
-                          onTap: () {
-                            if (model.selectedMethod !=
-                                model.paymentMethods[index].id.toString()) {
-                              model.selectedMethod =
-                                  model.paymentMethods[index].id.toString();
-                              model.wallets = [];
-
-                              PaymentMethodAPI().fetchPaymentMethodSettings(
-                                context,
-                                model.paymentMethods[index].id.toString(),
-                              );
-                            }
-
-                            _showBottomSheet(
-                              model.paymentMethods[index].titleEn,
-                            );
-                          },
-                          child: Row(
-                            children: [
-                              // icon
-                              Container(
-                                  padding: const EdgeInsets.all(12.0),
-                                  margin: const EdgeInsets.only(right: 15.0),
-                                  decoration: BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    color:
-                                        EjaraStyles.colorBlue.withOpacity(0.1),
-                                  ),
-                                  child: Icon(
-                                    getIcon(
-                                        model.paymentMethods[index].titleEn),
-                                    color: EjaraStyles.colorBlue,
-                                  )),
-
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    model.paymentMethods[index].titleEn,
-                                    style: TextStyle(
-                                      fontSize: 18.0,
-                                      color: EjaraStyles.colorDarkBlue
-                                          .withOpacity(0.7),
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                  ),
-                                  Container(
-                                    padding: const EdgeInsets.only(
-                                      top: 5.0,
-                                    ),
-                                    child: Text(
-                                      "Fees: " +
-                                          model.paymentMethods[index].fees,
-                                      style: TextStyle(
-                                        color: EjaraStyles.colorLightBlue
-                                            .withOpacity(0.5),
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.w600,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                        );
-                      },
+                    child: EjaraPaymentMethodsList(
+                      model: model,
+                      onTap: (title) => _showBottomSheet(title),
                     ),
                   ),
 
+                // error loading payment methods
                 if (model.isMethodLoading == false &&
                     model.paymentMethods.isEmpty)
-                  Container(
-                    padding: const EdgeInsets.only(top: 20),
-                    child: Center(
-                      child: Column(
-                        children: [
-                          const Text("Error loading payment methods"),
-                          OutlinedButton(
-                            onPressed: () async {
-                              await PaymentMethodAPI().login();
-                              PaymentMethodAPI().fetchPaymentMethods(context);
-                            },
-                            child: const Text("Reload"),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
+                  const EjaraErrorWidget(),
 
                 // show loading
                 if (model.isMethodLoading)
                   const Center(
-                    child: SizedBox(
-                      width: 30,
-                      height: 30,
-                      child: CircularProgressIndicator(
-                        strokeWidth: 2.0,
-                        color: EjaraStyles.colorDarkBlue,
-                      ),
-                    ),
+                    child: EjaraLoader(),
                   )
               ],
             ),
@@ -202,138 +112,8 @@ class _PaymentMethodScreenState extends State<PaymentMethodScreen> {
     );
   }
 
-  final Container backButton = Container(
-    decoration: BoxDecoration(
-      shape: BoxShape.circle,
-      color: EjaraStyles.colorLightBlue.withOpacity(0.1),
-    ),
-    child: IconButton(
-      onPressed: () {},
-      icon: const Icon(
-        Icons.arrow_back_ios_new_rounded,
-        color: EjaraStyles.colorBlue,
-        size: 18.0,
-      ),
-    ),
-  );
-
-  Card balanceCard() {
-    return Card(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(20.0),
-      ),
-      elevation: 10.0,
-      shadowColor: EjaraStyles.colorCardShadow.withOpacity(0.1),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          const SizedBox(height: 20.0),
-
-          // icon
-          Card(
-            elevation: 10.0,
-            shadowColor: EjaraStyles.colorBlue.withOpacity(0.2),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(16.0),
-            ),
-            color: EjaraStyles.colorBlue.withOpacity(0.5),
-            child: Container(
-              padding: const EdgeInsets.all(18.0),
-              child: const Icon(
-                Icons.folder_outlined,
-                size: 24.0,
-                color: EjaraStyles.colorWhite,
-              ),
-            ),
-          ),
-
-          Container(
-            padding: const EdgeInsets.only(top: 15.0),
-            child: const Text(
-              "Ejara Flex",
-              style: TextStyle(
-                fontSize: 22.0,
-                color: EjaraStyles.colorLightBlue,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          ),
-
-          Container(
-            padding: const EdgeInsets.only(top: 20.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: const [
-                Text(
-                  "20,000",
-                  style: TextStyle(
-                    fontSize: 28.0,
-                    color: EjaraStyles.colorDarkBlue,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                Text(
-                  "CFA",
-                  style: TextStyle(
-                    fontSize: 28.0,
-                    color: EjaraStyles.colorLightBlue,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-              ],
-            ),
-          ),
-
-          Container(
-              padding: const EdgeInsets.only(top: 20.0),
-              child: const Divider()),
-
-          Container(
-              padding: const EdgeInsets.all(15.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    "Earnings per day",
-                    style: TextStyle(
-                      color: EjaraStyles.colorLightBlue.withOpacity(0.5),
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                  const Text(
-                    "10,000CFA",
-                    style: TextStyle(
-                      fontSize: 16.0,
-                      color: EjaraStyles.colorLightBlue,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ],
-              )),
-        ],
-      ),
-    );
-  }
-
-  IconData getIcon(String name) {
-    IconData icon;
-    switch (name.toLowerCase()) {
-      case "mobile money":
-        icon = Icons.phone_android_rounded;
-        break;
-      case "bank":
-        icon = FontAwesome.bank;
-        break;
-      default:
-        icon = Icons.attach_money;
-    }
-
-    return icon;
-  }
-
   _showBottomSheet(String paymentMethods) {
     showModalBottomSheet(
-      elevation: 10,
       backgroundColor: Theme.of(context).bottomAppBarColor,
       isScrollControlled: true,
       context: context,
@@ -395,91 +175,15 @@ class _PaymentMethodScreenState extends State<PaymentMethodScreen> {
             // wallets
             if (!model.isWalletLoading)
               model.wallets.isNotEmpty
-                  ? SizedBox(
-                      height: 250,
-                      child: ListView.builder(
-                          itemCount: model.wallets.length,
-                          itemBuilder: (context, index) {
-                            return Container(
-                              padding: const EdgeInsets.only(
-                                left: 15,
-                                right: 15,
-                                top: 5.0,
-                              ),
-                              child: GestureDetector(
-                                onTap: () {
-                                  model.selectedWalletNumber =
-                                      model.wallets[index].identification;
-                                },
-                                child: Card(
-                                  elevation: 10.0,
-                                  shadowColor: EjaraStyles.colorCardShadow
-                                      .withOpacity(0.2),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(20.0),
-                                  ),
-                                  child: Container(
-                                    padding: const EdgeInsets.all(10.0),
-                                    child: Row(
-                                      children: [
-                                        Theme(
-                                          data: Theme.of(context).copyWith(
-                                            unselectedWidgetColor: EjaraStyles
-                                                .colorLightBlue
-                                                .withOpacity(0.2),
-                                          ),
-                                          child: Transform.scale(
-                                            scale: 1.2,
-                                            child: Radio<String>(
-                                              value: model.wallets[index]
-                                                  .identification,
-                                              groupValue:
-                                                  model.selectedWalletNumber,
-                                              onChanged: (String? val) {
-                                                model.selectedWalletNumber =
-                                                    val!;
-                                              },
-                                            ),
-                                          ),
-                                        ),
-                                        Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                              model.wallets[index].titleEn,
-                                              style: const TextStyle(
-                                                fontSize: 18.0,
-                                                color:
-                                                    EjaraStyles.colorDarkBlue,
-                                                fontWeight: FontWeight.bold,
-                                              ),
-                                            ),
-                                            const SizedBox(
-                                              height: 8.0,
-                                            ),
-                                            Text(
-                                              EjaraNumberFormatter()
-                                                  .formatNumber(model
-                                                      .wallets[index]
-                                                      .identification),
-                                              style: TextStyle(
-                                                fontWeight: FontWeight.w600,
-                                                color: EjaraStyles
-                                                    .colorLightBlue
-                                                    .withOpacity(0.5),
-                                                fontSize: 16.0,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            );
-                          }),
+                  ? Container(
+                      constraints: const BoxConstraints(
+                        minHeight: 100.0,
+                        minWidth: double.infinity,
+                        maxHeight: 250.0,
+                      ),
+                      child: EjaraWalletList(
+                        model: model,
+                      ),
                     )
                   // no wallets info
                   : Container(
@@ -499,48 +203,12 @@ class _PaymentMethodScreenState extends State<PaymentMethodScreen> {
               Container(
                 padding: const EdgeInsets.only(top: 10),
                 child: const Center(
-                  child: SizedBox(
-                    width: 30,
-                    height: 30,
-                    child: CircularProgressIndicator(
-                      strokeWidth: 2.0,
-                      color: EjaraStyles.colorDarkBlue,
-                    ),
-                  ),
+                  child: EjaraLoader(),
                 ),
               ),
 
             // or
-            Container(
-              padding: const EdgeInsets.only(top: 25, right: 15, left: 15),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: Divider(
-                      thickness: 2,
-                      color: EjaraStyles.colorLightBlue.withOpacity(0.1),
-                    ),
-                  ),
-                  Container(
-                    padding: const EdgeInsets.only(left: 10.0, right: 10.0),
-                    child: Text(
-                      "Or",
-                      style: TextStyle(
-                        fontWeight: FontWeight.w700,
-                        color: EjaraStyles.colorLightBlue.withOpacity(0.5),
-                        fontSize: 16.0,
-                      ),
-                    ),
-                  ),
-                  Expanded(
-                    child: Divider(
-                      thickness: 2,
-                      color: EjaraStyles.colorLightBlue.withOpacity(0.1),
-                    ),
-                  ),
-                ],
-              ),
-            ),
+            const TextBetweenLine(text: "Or"),
 
             // add method
             Container(
@@ -551,16 +219,19 @@ class _PaymentMethodScreenState extends State<PaymentMethodScreen> {
                 bottom: 30.0,
               ),
               child: TextButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => NewWallet(
-                        paymentMethod: paymentMethods.toLowerCase(),
-                      ),
-                    ),
-                  );
-                },
+                // disable click action for bank, no ui provided
+                onPressed: paymentMethods.toLowerCase() == "bank"
+                    ? null
+                    : () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => NewWallet(
+                              paymentMethod: paymentMethods.toLowerCase(),
+                            ),
+                          ),
+                        );
+                      },
                 style: TextButton.styleFrom(
                   primary: EjaraStyles.colorBlue,
                   backgroundColor: EjaraStyles.colorBlue.withOpacity(0.1),
@@ -590,12 +261,13 @@ class _PaymentMethodScreenState extends State<PaymentMethodScreen> {
 
             // continue button
             Container(
-                padding: const EdgeInsets.only(
-                  left: 15,
-                  right: 15,
-                  bottom: 30.0,
-                ),
-                child: const EjaraContinueButton())
+              padding: const EdgeInsets.only(
+                left: 15,
+                right: 15,
+                bottom: 30.0,
+              ),
+              child: const EjaraContinueButton(),
+            ),
           ],
         );
       }),
