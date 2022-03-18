@@ -41,8 +41,6 @@ class PaymentMethodAPI {
       if (response.statusCode == 200) {
         Map resMap = json.decode(response.body);
 
-        print(resMap);
-
         List<PaymentType> _paymentMethods = (resMap["data"] as List)
             .map((pm) => PaymentType.fromJson(pm))
             .toList();
@@ -60,9 +58,12 @@ class PaymentMethodAPI {
   }
 
   void fetchPaymentMethodSettings(BuildContext context, String id) async {
-    final prefs = await SharedPreferences.getInstance();
+    var pmModel = context.read<PaymentMethodsModel>();
 
-    print(id);
+    // set loading
+    pmModel.isWalletLoading = true;
+
+    final prefs = await SharedPreferences.getInstance();
 
     String _url =
         "/customer/payment-settings-per-type?paymentTypeId=$id&countryCode=CM&transactionType=buy";
@@ -83,21 +84,19 @@ class PaymentMethodAPI {
       if (response.statusCode == 200) {
         Map resMap = json.decode(response.body);
 
-        print(resMap);
+        List<Wallet> _wallets =
+            (resMap["data"] as List).map((pm) => Wallet.fromJson(pm)).toList();
 
-        // List<PaymentType> _paymentMethods = (resMap["data"] as List)
-        //     .map((pm) => PaymentType.fromJson(pm))
-        //     .toList();
-
-        // var pmModel = context.read<PaymentMethodsModel>();
-
-        // pmModel.paymentMethods = _paymentMethods;
+        pmModel.wallets = _wallets;
       }
     } catch (e) {
       if (kDebugMode) {
         print(e);
       }
     }
+
+    // set loading
+    pmModel.isWalletLoading = false;
   }
 
   Future<void> login() async {
@@ -132,18 +131,24 @@ class PaymentMethodAPI {
     List<Map> _dummyData = [
       {
         "id": 1,
-        "name": "Orange Money",
-        "number": "696920908",
+        "identification": "696920908",
+        "data": {
+          "title_en": "Orange Money",
+        }
       },
       {
         "id": 2,
-        "name": "MTN Mobile Money",
-        "number": "678897890",
+        "identification": "678897890",
+        "data": {
+          "title_en": "MTN Mobile Money",
+        }
       },
       {
         "id": 3,
-        "name": "Orange Money",
-        "number": "690950490",
+        "identification": "690950490",
+        "data": {
+          "title_en": "Orange Money",
+        }
       },
     ];
 

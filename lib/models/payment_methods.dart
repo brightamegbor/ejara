@@ -20,12 +20,30 @@ class PaymentMethodsModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  bool _isWalletLoading = false;
+
+  bool get isWalletLoading => _isWalletLoading;
+
+  set isWalletLoading(bool value) {
+    _isWalletLoading = value;
+    notifyListeners();
+  }
+
   List<Wallet> _wallets = [];
 
   List<Wallet> get wallets => _wallets;
 
   set wallets(List<Wallet> value) {
     _wallets = value;
+    notifyListeners();
+  }
+
+  String _selectedMethod = "";
+
+  String get selectedMethod => _selectedMethod;
+
+  set selectedMethod(String value) {
+    _selectedMethod = value;
     notifyListeners();
   }
 

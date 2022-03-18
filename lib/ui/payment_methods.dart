@@ -49,23 +49,15 @@ class _PaymentMethodScreenState extends State<PaymentMethodScreen> {
                 backButton,
 
                 // choose payment methods
-                // TODO: remove inkwell
-                InkWell(
-                  onTap: () {
-                    // PaymentMethodAPI().login();
-                    PaymentMethodAPI().fetchPaymentMethods(context);
-                    // PaymentMethodAPI().fetchPaymentMethodSettings(context);
-                  },
-                  child: Container(
-                    padding: const EdgeInsets.only(top: 15.0, bottom: 15.0),
-                    child: const Text(
-                      "Choose a payment method",
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        color: EjaraStyles.colorDarkerBlue,
-                        fontSize: 35.0,
-                        fontWeight: FontWeight.bold,
-                      ),
+                Container(
+                  padding: const EdgeInsets.only(top: 15.0, bottom: 15.0),
+                  child: const Text(
+                    "Choose a payment method",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      color: EjaraStyles.colorDarkerBlue,
+                      fontSize: 35.0,
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
                 ),
@@ -101,22 +93,21 @@ class _PaymentMethodScreenState extends State<PaymentMethodScreen> {
                       itemBuilder: (context, index) {
                         return InkWell(
                           onTap: () {
-                            // PaymentMethodAPI().fetchPaymentMethodSettings(
-                            //   context,
-                            //   model.paymentMethods[index].id.toString(),
-                            // );
-
-                            // check if mobile money is clicked, then set a dummy data
-                            if (model.paymentMethods[index].titleEn
-                                .toLowerCase()
-                                .contains("mobile")) {
-                              PaymentMethodAPI().setDummyMobileWallets(context);
-                            } else {
+                            if (model.selectedMethod !=
+                                model.paymentMethods[index].id.toString()) {
+                              model.selectedMethod =
+                                  model.paymentMethods[index].id.toString();
                               model.wallets = [];
+
+                              PaymentMethodAPI().fetchPaymentMethodSettings(
+                                context,
+                                model.paymentMethods[index].id.toString(),
+                              );
                             }
 
                             _showBottomSheet(
-                                model.paymentMethods[index].titleEn, model);
+                              model.paymentMethods[index].titleEn,
+                            );
                           },
                           child: Row(
                             children: [
@@ -340,7 +331,7 @@ class _PaymentMethodScreenState extends State<PaymentMethodScreen> {
     return icon;
   }
 
-  _showBottomSheet(String paymentMethods, PaymentMethodsModel model) {
+  _showBottomSheet(String paymentMethods) {
     showModalBottomSheet(
       elevation: 10,
       backgroundColor: Theme.of(context).bottomAppBarColor,
@@ -353,7 +344,8 @@ class _PaymentMethodScreenState extends State<PaymentMethodScreen> {
           topRight: Radius.circular(20.0),
         ),
       ),
-      builder: (ctx) => StatefulBuilder(builder: (context, setState) {
+      builder: (ctx) =>
+          Consumer<PaymentMethodsModel>(builder: (context, model, child) {
         return Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -401,104 +393,122 @@ class _PaymentMethodScreenState extends State<PaymentMethodScreen> {
             ),
 
             // wallets
-            model.wallets.isNotEmpty
-                ? SizedBox(
-                    height: 250,
-                    child: ListView.builder(
-                        itemCount: model.wallets.length,
-                        itemBuilder: (context, index) {
-                          return Container(
-                            padding: const EdgeInsets.only(
-                              left: 15,
-                              right: 15,
-                              top: 5.0,
-                            ),
-                            child: GestureDetector(
-                              onTap: () {
-                                setState(() {
+            if (!model.isWalletLoading)
+              model.wallets.isNotEmpty
+                  ? SizedBox(
+                      height: 250,
+                      child: ListView.builder(
+                          itemCount: model.wallets.length,
+                          itemBuilder: (context, index) {
+                            return Container(
+                              padding: const EdgeInsets.only(
+                                left: 15,
+                                right: 15,
+                                top: 5.0,
+                              ),
+                              child: GestureDetector(
+                                onTap: () {
                                   model.selectedWalletNumber =
-                                      model.wallets[index].number;
-                                });
-                              },
-                              child: Card(
-                                elevation: 10.0,
-                                shadowColor: EjaraStyles.colorCardShadow
-                                    .withOpacity(0.2),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(20.0),
-                                ),
-                                child: Container(
-                                  padding: const EdgeInsets.all(10.0),
-                                  child: Row(
-                                    children: [
-                                      Theme(
-                                        data: Theme.of(context).copyWith(
-                                          unselectedWidgetColor: EjaraStyles
-                                              .colorLightBlue
-                                              .withOpacity(0.2),
-                                        ),
-                                        child: Transform.scale(
-                                          scale: 1.2,
-                                          child: Radio<String>(
-                                            value: model.wallets[index].number,
-                                            groupValue:
-                                                model.selectedWalletNumber,
-                                            onChanged: (String? val) {
-                                              setState(() {
+                                      model.wallets[index].identification;
+                                },
+                                child: Card(
+                                  elevation: 10.0,
+                                  shadowColor: EjaraStyles.colorCardShadow
+                                      .withOpacity(0.2),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(20.0),
+                                  ),
+                                  child: Container(
+                                    padding: const EdgeInsets.all(10.0),
+                                    child: Row(
+                                      children: [
+                                        Theme(
+                                          data: Theme.of(context).copyWith(
+                                            unselectedWidgetColor: EjaraStyles
+                                                .colorLightBlue
+                                                .withOpacity(0.2),
+                                          ),
+                                          child: Transform.scale(
+                                            scale: 1.2,
+                                            child: Radio<String>(
+                                              value: model.wallets[index]
+                                                  .identification,
+                                              groupValue:
+                                                  model.selectedWalletNumber,
+                                              onChanged: (String? val) {
                                                 model.selectedWalletNumber =
                                                     val!;
-                                              });
-                                            },
+                                              },
+                                            ),
                                           ),
                                         ),
-                                      ),
-                                      Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Text(
-                                            model.wallets[index].name,
-                                            style: const TextStyle(
-                                              fontSize: 18.0,
-                                              color: EjaraStyles.colorDarkBlue,
-                                              fontWeight: FontWeight.bold,
+                                        Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              model.wallets[index].titleEn,
+                                              style: const TextStyle(
+                                                fontSize: 18.0,
+                                                color:
+                                                    EjaraStyles.colorDarkBlue,
+                                                fontWeight: FontWeight.bold,
+                                              ),
                                             ),
-                                          ),
-                                          const SizedBox(
-                                            height: 8.0,
-                                          ),
-                                          Text(
-                                            EjaraNumberFormatter().formatNumber(
-                                                model.wallets[index].number),
-                                            style: TextStyle(
-                                              fontWeight: FontWeight.w600,
-                                              color: EjaraStyles.colorLightBlue
-                                                  .withOpacity(0.5),
-                                              fontSize: 16.0,
+                                            const SizedBox(
+                                              height: 8.0,
                                             ),
-                                          ),
-                                        ],
-                                      ),
-                                    ],
+                                            Text(
+                                              EjaraNumberFormatter()
+                                                  .formatNumber(model
+                                                      .wallets[index]
+                                                      .identification),
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.w600,
+                                                color: EjaraStyles
+                                                    .colorLightBlue
+                                                    .withOpacity(0.5),
+                                                fontSize: 16.0,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
                                   ),
                                 ),
                               ),
-                            ),
-                          );
-                        }),
-                  )
-                // no wallets info
-                : Container(
-                    padding: const EdgeInsets.all(15.0),
-                    child: Text(
-                      "No wallets added",
-                      style: TextStyle(
-                        fontWeight: FontWeight.w700,
-                        color: EjaraStyles.colorLightBlue.withOpacity(0.5),
-                        fontSize: 16.0,
+                            );
+                          }),
+                    )
+                  // no wallets info
+                  : Container(
+                      padding: const EdgeInsets.all(15.0),
+                      child: Text(
+                        "No wallets added",
+                        style: TextStyle(
+                          fontWeight: FontWeight.w700,
+                          color: EjaraStyles.colorLightBlue.withOpacity(0.5),
+                          fontSize: 16.0,
+                        ),
                       ),
                     ),
+
+            // set loading
+            if (model.isWalletLoading)
+              Container(
+                padding: const EdgeInsets.only(top: 10),
+                child: const Center(
+                  child: SizedBox(
+                    width: 30,
+                    height: 30,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2.0,
+                      color: EjaraStyles.colorDarkBlue,
+                    ),
                   ),
+                ),
+              ),
 
             // or
             Container(
