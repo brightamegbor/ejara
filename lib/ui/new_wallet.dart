@@ -1,9 +1,11 @@
 import 'package:ejara/common/ejara_styles.dart';
 import 'package:ejara/models/payment_methods.dart';
+import 'package:ejara/utils/text_field_number_format.dart';
 import 'package:ejara/widgets/continue_button.dart';
 import 'package:ejara/widgets/dropdown_field.dart';
 import 'package:ejara/widgets/text_field.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_switch/flutter_switch.dart';
 import 'package:provider/provider.dart';
 
@@ -79,6 +81,11 @@ class _NewWalletState extends State<NewWallet> {
                         EjaraTextField(
                           label: "Phone number",
                           controller: phoneController,
+                          inputFormatters: [
+                            FilteringTextInputFormatter.digitsOnly,
+                            EjaraCustomInputFormatter()
+                          ],
+                          maxLength: 13,
                         ),
 
                         const SizedBox(height: 25),
