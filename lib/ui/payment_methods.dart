@@ -37,11 +37,11 @@ class _PaymentMethodScreenState extends State<PaymentMethodScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Consumer<PaymentMethodsModel>(
-        builder: (context, model, child) => Scaffold(
-          backgroundColor: EjaraStyles.colorBackground,
-          body: Container(
+    return Consumer<PaymentMethodsModel>(
+      builder: (context, model, child) => Scaffold(
+        backgroundColor: EjaraStyles.colorBackground,
+        body: SafeArea(
+          child: Container(
             padding: const EdgeInsets.all(16.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,

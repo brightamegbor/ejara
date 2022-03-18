@@ -28,11 +28,11 @@ class _NewWalletState extends State<NewWallet> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Consumer<PaymentMethodsModel>(
-        builder: (context, model, child) => Scaffold(
-          backgroundColor: EjaraStyles.colorWhite,
-          body: Container(
+    return Consumer<PaymentMethodsModel>(
+      builder: (context, model, child) => Scaffold(
+        backgroundColor: EjaraStyles.colorWhite,
+        body: SafeArea(
+          child: Container(
             padding: const EdgeInsets.all(16.0),
             child: SingleChildScrollView(
               child: SizedBox(
