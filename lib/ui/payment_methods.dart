@@ -1,6 +1,7 @@
 import 'package:ejara/common/ejara_styles.dart';
 import 'package:ejara/models/payment_methods.dart';
 import 'package:ejara/ui/new_wallet.dart';
+import 'package:ejara/utils/number_formatter.dart';
 import 'package:ejara/utils/payment_methods_api.dart';
 import 'package:ejara/widgets/continue_button.dart';
 import 'package:flutter/material.dart';
@@ -167,6 +168,26 @@ class _PaymentMethodScreenState extends State<PaymentMethodScreen> {
                           ),
                         );
                       },
+                    ),
+                  ),
+
+                if (model.isMethodLoading == false &&
+                    model.paymentMethods.isEmpty)
+                  Container(
+                    padding: const EdgeInsets.only(top: 20),
+                    child: Center(
+                      child: Column(
+                        children: [
+                          const Text("Error loading payment methods"),
+                          OutlinedButton(
+                            onPressed: () async {
+                              await PaymentMethodAPI().login();
+                              PaymentMethodAPI().fetchPaymentMethods(context);
+                            },
+                            child: const Text("Reload"),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
 
@@ -447,7 +468,8 @@ class _PaymentMethodScreenState extends State<PaymentMethodScreen> {
                                             height: 8.0,
                                           ),
                                           Text(
-                                            model.wallets[index].number,
+                                            EjaraNumberFormatter().formatNumber(
+                                                model.wallets[index].number),
                                             style: TextStyle(
                                               fontWeight: FontWeight.w600,
                                               color: EjaraStyles.colorLightBlue
