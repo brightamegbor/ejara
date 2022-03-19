@@ -15,7 +15,6 @@ Future<void> main() async {
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     // change statusBarColor
@@ -30,7 +29,8 @@ class MyApp extends StatelessWidget {
           ),
         ],
         child: MaterialApp(
-          title: 'Flutter Demo',
+          title: 'Ejara',
+          debugShowCheckedModeBanner: false,
           theme: ThemeData(
             fontFamily: "Metropolis",
             primarySwatch: Colors.blue,
