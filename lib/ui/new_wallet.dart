@@ -31,13 +31,12 @@ class _NewWalletState extends State<NewWallet> {
       body: SafeArea(
         child: Container(
           padding: const EdgeInsets.all(16.0),
-          child: SingleChildScrollView(
-            child: SizedBox(
-              height: MediaQuery.of(context).size.height * 0.9,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Column(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Expanded(
+                child: SingleChildScrollView(
+                  child: Column(
                     children: [
                       // close button
                       Align(
@@ -128,16 +127,16 @@ class _NewWalletState extends State<NewWallet> {
                       ),
                     ],
                   ),
-
-                  // continue button
-                  Container(
-                      padding: const EdgeInsets.only(
-                        top: 30.0,
-                      ),
-                      child: const EjaraContinueButton()),
-                ],
+                ),
               ),
-            ),
+
+              // continue button
+              Container(
+                  margin: const EdgeInsets.only(
+                    top: 40.0,
+                  ),
+                  child: const EjaraContinueButton()),
+            ],
           ),
         ),
       ),
