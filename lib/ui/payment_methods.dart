@@ -47,11 +47,15 @@ class _PaymentMethodScreenState extends State<PaymentMethodScreen> {
         backgroundColor: EjaraStyles.colorBackground,
         body: SafeArea(
           child: Container(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+            margin: const EdgeInsets.only(left: 16.0, right: 16),
+            child: ListView(
+              // crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const EjaraBackButton(),
+                Container(
+                  padding: const EdgeInsets.only(top: 15),
+                  alignment: Alignment.centerLeft,
+                  child: const EjaraBackButton(),
+                ),
 
                 // choose payment methods
                 Container(
@@ -87,11 +91,9 @@ class _PaymentMethodScreenState extends State<PaymentMethodScreen> {
 
                 // payment_methods
                 if (model.paymentMethods.isNotEmpty)
-                  Expanded(
-                    child: EjaraPaymentMethodsList(
-                      model: model,
-                      onTap: (title) => _showBottomSheet(title),
-                    ),
+                  EjaraPaymentMethodsList(
+                    model: model,
+                    onTap: (title) => _showBottomSheet(title),
                   ),
 
                 // error loading payment methods
@@ -103,7 +105,9 @@ class _PaymentMethodScreenState extends State<PaymentMethodScreen> {
                 if (model.isMethodLoading)
                   const Center(
                     child: EjaraLoader(),
-                  )
+                  ),
+
+                const SizedBox(height: 20),
               ],
             ),
           ),
