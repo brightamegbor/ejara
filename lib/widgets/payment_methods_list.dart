@@ -17,9 +17,12 @@ class EjaraPaymentMethodsList extends StatelessWidget {
     return ListView.separated(
       separatorBuilder: (context, index) {
         return const Divider(
-          height: 25.0,
+          height: 35.0,
         );
       },
+      //prevents scroll
+      physics: const NeverScrollableScrollPhysics(),
+      shrinkWrap: true,
       itemCount: model.paymentMethods.length,
       itemBuilder: (context, index) {
         return InkWell(
