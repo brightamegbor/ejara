@@ -48,7 +48,7 @@ class EjaraPaymentMethodsList extends StatelessWidget {
                   margin: const EdgeInsets.only(right: 15.0),
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    color: EjaraStyles.colorBlue.withOpacity(0.1),
+                    color: EjaraStyles.colorLightBlue.withOpacity(0.1),
                   ),
                   child: Icon(
                     IconSelector().getIcon(model.paymentMethods[index].titleEn),
@@ -61,7 +61,7 @@ class EjaraPaymentMethodsList extends StatelessWidget {
                   Text(
                     model.paymentMethods[index].titleEn,
                     style: TextStyle(
-                      fontSize: 18.0,
+                      fontSize: 20.0,
                       color: EjaraStyles.colorDarkBlue.withOpacity(0.7),
                       fontWeight: FontWeight.w600,
                     ),

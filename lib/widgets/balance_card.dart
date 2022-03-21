@@ -40,9 +40,9 @@ class EjaraBalanceCard extends StatelessWidget {
             child: const Text(
               "Ejara Flex",
               style: TextStyle(
-                fontSize: 22.0,
+                fontSize: 20.0,
                 color: EjaraStyles.colorLightBlue,
-                fontWeight: FontWeight.w600,
+                fontWeight: FontWeight.w500,
               ),
             ),
           ),
@@ -55,7 +55,7 @@ class EjaraBalanceCard extends StatelessWidget {
                 Text(
                   "20,000",
                   style: TextStyle(
-                    fontSize: 28.0,
+                    fontSize: 32.0,
                     color: EjaraStyles.colorDarkBlue,
                     fontWeight: FontWeight.bold,
                   ),
@@ -63,7 +63,7 @@ class EjaraBalanceCard extends StatelessWidget {
                 Text(
                   "CFA",
                   style: TextStyle(
-                    fontSize: 28.0,
+                    fontSize: 32.0,
                     color: EjaraStyles.colorLightBlue,
                     fontWeight: FontWeight.w500,
                   ),
@@ -101,6 +101,5 @@ class EjaraBalanceCard extends StatelessWidget {
         ],
       ),
     );
-    ;
   }
 }

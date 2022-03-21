@@ -30,7 +30,7 @@ class _NewWalletState extends State<NewWallet> {
       backgroundColor: EjaraStyles.colorWhite,
       body: SafeArea(
         child: Container(
-          padding: const EdgeInsets.all(16.0),
+          padding: const EdgeInsets.fromLTRB(16.0, 10, 16, 10),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -54,7 +54,7 @@ class _NewWalletState extends State<NewWallet> {
                             textAlign: TextAlign.center,
                             style: const TextStyle(
                               color: EjaraStyles.colorDarkerBlue,
-                              fontSize: 35.0,
+                              fontSize: 32.0,
                               fontWeight: FontWeight.w700,
                             ),
                           ),
@@ -92,7 +92,7 @@ class _NewWalletState extends State<NewWallet> {
                         controller: nameController,
                       ),
 
-                      const SizedBox(height: 25),
+                      const SizedBox(height: 28),
 
                       // save paymentMethod
                       Row(

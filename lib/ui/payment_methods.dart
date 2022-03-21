@@ -52,20 +52,20 @@ class _PaymentMethodScreenState extends State<PaymentMethodScreen> {
               // crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Container(
-                  padding: const EdgeInsets.only(top: 15),
+                  padding: const EdgeInsets.only(top: 10),
                   alignment: Alignment.centerLeft,
                   child: const EjaraBackButton(),
                 ),
 
                 // choose payment methods
                 Container(
-                  padding: const EdgeInsets.only(top: 15.0, bottom: 15.0),
+                  padding: const EdgeInsets.only(top: 20.0, bottom: 15.0),
                   child: const Text(
                     "Choose a payment method",
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       color: EjaraStyles.colorDarkerBlue,
-                      fontSize: 35.0,
+                      fontSize: 32.0,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -82,9 +82,9 @@ class _PaymentMethodScreenState extends State<PaymentMethodScreen> {
                   child: const Text(
                     "Select a payment methods",
                     style: TextStyle(
-                      fontSize: 18.0,
+                      fontSize: 20.0,
                       color: EjaraStyles.colorDarkBlue,
-                      fontWeight: FontWeight.bold,
+                      fontWeight: FontWeight.w600,
                     ),
                   ),
                 ),
@@ -185,6 +185,10 @@ class _PaymentMethodScreenState extends State<PaymentMethodScreen> {
                         minWidth: double.infinity,
                         maxHeight: 250.0,
                       ),
+                      margin: const EdgeInsets.only(
+                        bottom: 30,
+                        top: 20,
+                      ),
                       child: EjaraWalletList(
                         model: model,
                       ),
@@ -205,7 +209,7 @@ class _PaymentMethodScreenState extends State<PaymentMethodScreen> {
             // set loading
             if (model.isWalletLoading)
               Container(
-                padding: const EdgeInsets.only(top: 10),
+                padding: const EdgeInsets.only(top: 15, bottom: 15),
                 child: const Center(
                   child: EjaraLoader(),
                 ),
@@ -219,7 +223,7 @@ class _PaymentMethodScreenState extends State<PaymentMethodScreen> {
               padding: const EdgeInsets.only(
                 left: 15,
                 right: 15,
-                top: 35.0,
+                top: 30.0,
                 bottom: 30.0,
               ),
               child: TextButton(

@@ -8,7 +8,7 @@ class TextBetweenLine extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.only(top: 25, right: 15, left: 15),
+      padding: const EdgeInsets.only(right: 15, left: 15),
       child: Row(
         children: [
           Expanded(

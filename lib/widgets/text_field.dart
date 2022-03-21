@@ -47,8 +47,8 @@ class EjaraTextField extends StatelessWidget {
           decoration: InputDecoration(
             counterText: "",
             contentPadding: const EdgeInsets.symmetric(
-              vertical: 25.0,
-              horizontal: 15.0,
+              vertical: 24.0,
+              horizontal: 24.0,
             ),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(20),

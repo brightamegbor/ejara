@@ -35,7 +35,7 @@ class EjaraDropdownField extends StatelessWidget {
 
         // dropdown_field
         Container(
-          padding: const EdgeInsets.fromLTRB(15, 8, 15, 8),
+          padding: const EdgeInsets.fromLTRB(24, 8, 24, 8),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(20),
             border: Border.all(
